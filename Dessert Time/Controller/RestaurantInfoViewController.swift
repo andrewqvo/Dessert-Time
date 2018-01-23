@@ -10,6 +10,19 @@ import UIKit
 
 class RestaurantInfoViewController: UIViewController {
 
+    @IBOutlet weak var restaurantImageView: UIImageView!
+    @IBOutlet weak var restaurantNameLabel: UILabel!
+    @IBOutlet weak var starRatingImageView: UIImageView!
+    @IBOutlet weak var yelpLogoButton: UIButton!
+    @IBOutlet weak var dollarSign1Label: UILabel!
+    @IBOutlet weak var dollarSign2Label: UILabel!
+    @IBOutlet weak var dollarSign3Label: UILabel!
+    @IBOutlet weak var dollarSign4Label: UILabel!
+    @IBOutlet weak var openUntilLabel: UILabel!
+    @IBOutlet weak var categoriesLabel: UILabel!
+    @IBOutlet weak var addressButton: UIButton!
+    @IBOutlet weak var phoneNumberButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,15 +34,17 @@ class RestaurantInfoViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func yelpLogoButtonPressed(_ sender: Any) {
     }
-    */
+    
+    @IBAction func addressButtonPressed(_ sender: Any) {
+    }
+    @IBAction func phoneNumberButtonPressed(_ sender: Any) {
+    }
+    
+    @IBAction func backButtonPressed(_ sender: Any) {
+    }
+    
+    
 
 }
