@@ -102,7 +102,6 @@
 			isa = PBXGroup;
 			children = (
 				7CA321DD20056B8300EFB083 /* YelpDataModel.swift */,
-				7CA321E3200570CB00EFB083 /* SettingsDataModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -110,6 +109,7 @@
 		7CA321DA20056A6300EFB083 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7CA321E3200570CB00EFB083 /* SettingsDataModel.swift */,
 				7C813D231FFB8704003EE3FB /* Main.storyboard */,
 				7C813D281FFB8704003EE3FB /* LaunchScreen.storyboard */,
 			);
