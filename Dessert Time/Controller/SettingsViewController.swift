@@ -7,12 +7,11 @@
 //
 
 import UIKit
-
 class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        var settings = SettingsDataModel()
         // Do any additional setup after loading the view.
     }
 

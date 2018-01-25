@@ -18,9 +18,11 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     var currentLocation : CLLocation!
     let headers: HTTPHeaders = ["Authorization": "Bearer XEvRfinkWqs-awcPcDvYm6dq585nq3AkPzrxTZE3SNZsuRnm5eIRf8s7DZXw7IMdg1XzgvoO644IuAo0HVzXt8zDf99gNwLT5HQVBjwmCM4PPX2xpuzxJc1zZElLWnYx"]
     let yelpURL = "https://api.yelp.com/v3/businesses/search?"
-    var currentRestaurantNumber = 0
     var userAuthorizationStatus : CLAuthorizationStatus!
-        
+    var settingsDataModel = SettingsDataModel()
+    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0)
+    
+    
     @IBOutlet weak var dessertTimeLogo: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,17 +73,17 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
         if currentLocation == nil {
             currentLocation = location
             locationManager.stopUpdatingLocation()
-            //print("We found a location!")
-            //print("latitude is " + String(currentLocation.coordinate.latitude), "longitude is " + String(currentLocation.coordinate.longitude))
-            //dessertTimeLogo.text = "lati " + String(currentLocation.coordinate.latitude) + "long " + String(currentLocation.coordinate.longitude)
-            //dessertTimeLogo.font = UIFont(name: dessertTimeLogo.font.fontName, size: 10)
-//            if currentLocation == nil {
-//                print("current location it is nil right now")
-//            }
-            let params : [String : String] = ["latitude" : String(currentLocation.coordinate.latitude), "longitude" : String(currentLocation.coordinate.longitude), "categories" : "cakeshop"]
-            //let params : [String : String] = ["categories" : "candy"]
+            var categoriesString = ""
+            for category in settingsDataModel.categories {
+                categoriesString += category + ","
+            }
+            print(categoriesString.dropLast())
+            let params : [String : Any] = ["latitude" : String(currentLocation.coordinate.latitude), "longitude" : String(currentLocation.coordinate.longitude), "price" : self.settingsDataModel.priceLevel, "radius" : self.settingsDataModel.distanceInMeters, "categories" : categoriesString.dropLast()]
+
+            print(params)
             getRestaurantData(url: yelpURL, parameters: params, headers: headers)
-            performSegue(withIdentifier: "goToRestaurantInfo", sender: self)
+        
+            //performSegue(withIdentifier: "goToRestaurantInfo", sender: self)
             //print(locations)
         }
     }
@@ -97,13 +99,13 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     //MARK: - Networking
-    func getRestaurantData(url: String, parameters: [String:String], headers: HTTPHeaders) {
+    func getRestaurantData(url: String, parameters: [String:Any], headers: HTTPHeaders) {
         Alamofire.request(url, method: .get, parameters: parameters, headers: headers).responseJSON { response in
             if response.result.isSuccess {
                 print("we made a sucessful request (yelp data could still be an error)")
                 let yelpJSON : JSON = JSON(response.result.value!)
                 self.updateRestaurantData(json: yelpJSON)
-                print(yelpJSON)
+                //print(yelpJSON)
             }
             else {
                 print("error, we did not get sucessfully make a request")
@@ -113,18 +115,46 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     
     //MARK: - JSON Parsing
     func updateRestaurantData(json: JSON) {
-//        if let restaurantsList = json["businesses"].array {
-//            if json["businesses"].exists() {
-//                print(restaurantsList)
-//            }
-//        }
-        //it is possible to get a yelp JSON response that has the businesses field with no businesses in it, possibly change it later to different error messages
-        if let restaurantsList = json["businesses"].array, json["businesses"].exists() && json["businesses"].count != 0 {
-            print(restaurantsList)
+        let businessesArray = json["businesses"]
+        var dataModelArgumentsDict = businessesArrayToYelpDataModelArgument(businessesArray: businessesArray)
+        self.yelpDataModel = YelpDataModel(name: dataModelArgumentsDict["name"] as! String, rating: dataModelArgumentsDict["rating"] as! Int, yelpURL: dataModelArgumentsDict["yelpURL"] as! String, categories: dataModelArgumentsDict["categories"] as! [String], address: dataModelArgumentsDict["address"] as! [String], phoneNumber: dataModelArgumentsDict["phoneNumber"] as! String, distance: dataModelArgumentsDict["distance"] as! Double)
+        performSegue(withIdentifier: "goToRestaurantInfo", sender: self)
+    }
+    
+    func businessesArrayToYelpDataModelArgument(businessesArray : JSON) -> [String:Any]{
+        if let restaurantsList = businessesArray.array, businessesArray.exists() && businessesArray.count != 0 {
+            let restaurantNumber = Int(arc4random_uniform(UInt32(restaurantsList.count)))
+            print(restaurantNumber)
+            let restaurantDict = restaurantsList[restaurantNumber]
+            
+            let name = restaurantDict["name"].stringValue
+            let rating = restaurantDict["rating"].intValue
+            let yelpURL = restaurantDict["url"].stringValue
+            let unparsedCategories = restaurantDict["categories"].arrayValue
+            var parsedCategories : [String] = []
+            for item in unparsedCategories {
+                parsedCategories.append(item["title"].stringValue)
+            }
+            let unparsedAddress = restaurantDict["location"]["display_address"].arrayValue
+            var parsedAddress : [String] = []
+            for addressLine in unparsedAddress {
+                parsedAddress.append(addressLine.stringValue)
+            }
+            let phoneNumber = restaurantDict["display_phone"].stringValue
+            let distance = restaurantDict["distance"].doubleValue
+            //print(name,rating,yelpURL,parsedCategories,parsedAddress,phoneNumber,distance)
+            return ["name" : name, "rating" : rating, "yelpURL" : yelpURL, "categories" : parsedCategories, "address" : parsedAddress, "phoneNumber" : phoneNumber, "distance" : distance]
         }
         else {
             print("no restaurants found or we messed up :(")
         }
+        return ["name" : "", "rating" : "", "yelpURL" : "", "categories" : "", "address" : "", "phoneNumber" : "", "distance" : ""]
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
+        if segue.identifier == "goToRestaurantInfo" {
+            let nextVC : RestaurantInfoViewController = segue.destination as! RestaurantInfoViewController
+            nextVC.yelpDataModel = self.yelpDataModel
+        }
     }
 }
-

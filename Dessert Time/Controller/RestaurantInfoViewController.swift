@@ -22,11 +22,15 @@ class RestaurantInfoViewController: UIViewController {
     @IBOutlet weak var categoriesLabel: UILabel!
     @IBOutlet weak var addressButton: UIButton!
     @IBOutlet weak var phoneNumberButton: UIButton!
+    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,6 +39,7 @@ class RestaurantInfoViewController: UIViewController {
     }
     
     @IBAction func yelpLogoButtonPressed(_ sender: Any) {
+        print(yelpDataModel.name)
     }
     
     @IBAction func addressButtonPressed(_ sender: Any) {
