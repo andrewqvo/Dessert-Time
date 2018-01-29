@@ -22,11 +22,10 @@ class RestaurantInfoViewController: UIViewController {
     @IBOutlet weak var categoriesLabel: UILabel!
     @IBOutlet weak var addressButton: UIButton!
     @IBOutlet weak var phoneNumberButton: UIButton!
-    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0)
+    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0, photoURL: "")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view.
     }
     

@@ -20,7 +20,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     let yelpURL = "https://api.yelp.com/v3/businesses/search?"
     var userAuthorizationStatus : CLAuthorizationStatus!
     var settingsDataModel = SettingsDataModel()
-    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0)
+    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0, photoURL: "")
     
     
     @IBOutlet weak var dessertTimeLogo: UILabel!
@@ -77,7 +77,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
             for category in settingsDataModel.categories {
                 categoriesString += category + ","
             }
-            print(categoriesString.dropLast())
+            //print(categoriesString.dropLast())
             let params : [String : Any] = ["latitude" : String(currentLocation.coordinate.latitude), "longitude" : String(currentLocation.coordinate.longitude), "price" : self.settingsDataModel.priceLevel, "radius" : self.settingsDataModel.distanceInMeters, "categories" : categoriesString.dropLast()]
 
             print(params)
@@ -117,7 +117,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     func updateRestaurantData(json: JSON) {
         let businessesArray = json["businesses"]
         var dataModelArgumentsDict = businessesArrayToYelpDataModelArgument(businessesArray: businessesArray)
-        self.yelpDataModel = YelpDataModel(name: dataModelArgumentsDict["name"] as! String, rating: dataModelArgumentsDict["rating"] as! Int, yelpURL: dataModelArgumentsDict["yelpURL"] as! String, categories: dataModelArgumentsDict["categories"] as! [String], address: dataModelArgumentsDict["address"] as! [String], phoneNumber: dataModelArgumentsDict["phoneNumber"] as! String, distance: dataModelArgumentsDict["distance"] as! Double)
+        self.yelpDataModel = YelpDataModel(name: dataModelArgumentsDict["name"] as! String, rating: dataModelArgumentsDict["rating"] as! Int, yelpURL: dataModelArgumentsDict["yelpURL"] as! String, categories: dataModelArgumentsDict["categories"] as! [String], address: dataModelArgumentsDict["address"] as! [String], phoneNumber: dataModelArgumentsDict["phoneNumber"] as! String, distance: dataModelArgumentsDict["distance"] as! Double, photoURL: dataModelArgumentsDict["photoURL"] as! String)
         performSegue(withIdentifier: "goToRestaurantInfo", sender: self)
     }
     
@@ -142,8 +142,9 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
             }
             let phoneNumber = restaurantDict["display_phone"].stringValue
             let distance = restaurantDict["distance"].doubleValue
+            let photoURL = restaurantDict["image_url"].stringValue
             //print(name,rating,yelpURL,parsedCategories,parsedAddress,phoneNumber,distance)
-            return ["name" : name, "rating" : rating, "yelpURL" : yelpURL, "categories" : parsedCategories, "address" : parsedAddress, "phoneNumber" : phoneNumber, "distance" : distance]
+            return ["name" : name, "rating" : rating, "yelpURL" : yelpURL, "categories" : parsedCategories, "address" : parsedAddress, "phoneNumber" : phoneNumber, "distance" : distance, "photoURL" : photoURL]
         }
         else {
             print("no restaurants found or we messed up :(")

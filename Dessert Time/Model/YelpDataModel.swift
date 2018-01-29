@@ -18,8 +18,9 @@ class YelpDataModel {
     var address : [String] = []
     var phoneNumber : String = ""
     var distance : Double = 0.0
+    var photoURL : String = ""
     
-    init(name: String, rating: Int, yelpURL: String, categories: [String], address: [String], phoneNumber: String, distance: Double) {
+    init(name: String, rating: Int, yelpURL: String, categories: [String], address: [String], phoneNumber: String, distance: Double, photoURL: String) {
         self.name = name
         self.rating = rating
         self.yelpURL = yelpURL
@@ -27,8 +28,9 @@ class YelpDataModel {
         self.address = address
         self.phoneNumber = phoneNumber
         self.distance = distance
+        self.photoURL = photoURL
 
-        print(name, rating, yelpURL, categories, address, phoneNumber, distance)
+//        print(name, rating, yelpURL, categories, address, phoneNumber, distance, photoURL)
     }
     
 }
