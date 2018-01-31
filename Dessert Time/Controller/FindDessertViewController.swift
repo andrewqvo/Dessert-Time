@@ -20,7 +20,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     let yelpURL = "https://api.yelp.com/v3/businesses/search?"
     var userAuthorizationStatus : CLAuthorizationStatus!
     var settingsDataModel = SettingsDataModel()
-    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0, photoURL: "")
+    var yelpDataModel = YelpDataModel(name: "", rating: 0, yelpURL: "", categories: [], address: [], phoneNumber: "", distance: 0.0, photoURL: "", price: "$")
     
     
     @IBOutlet weak var dessertTimeLogo: UILabel!
@@ -117,7 +117,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
     func updateRestaurantData(json: JSON) {
         let businessesArray = json["businesses"]
         var dataModelArgumentsDict = businessesArrayToYelpDataModelArgument(businessesArray: businessesArray)
-        self.yelpDataModel = YelpDataModel(name: dataModelArgumentsDict["name"] as! String, rating: dataModelArgumentsDict["rating"] as! Int, yelpURL: dataModelArgumentsDict["yelpURL"] as! String, categories: dataModelArgumentsDict["categories"] as! [String], address: dataModelArgumentsDict["address"] as! [String], phoneNumber: dataModelArgumentsDict["phoneNumber"] as! String, distance: dataModelArgumentsDict["distance"] as! Double, photoURL: dataModelArgumentsDict["photoURL"] as! String)
+        self.yelpDataModel = YelpDataModel(name: dataModelArgumentsDict["name"] as! String, rating: dataModelArgumentsDict["rating"] as! Double, yelpURL: dataModelArgumentsDict["yelpURL"] as! String, categories: dataModelArgumentsDict["categories"] as! [String], address: dataModelArgumentsDict["address"] as! [String], phoneNumber: dataModelArgumentsDict["phoneNumber"] as! String, distance: dataModelArgumentsDict["distance"] as! Double, photoURL: dataModelArgumentsDict["photoURL"] as! String, price: dataModelArgumentsDict["price"] as! String)
         performSegue(withIdentifier: "goToRestaurantInfo", sender: self)
     }
     
@@ -128,7 +128,7 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
             let restaurantDict = restaurantsList[restaurantNumber]
             
             let name = restaurantDict["name"].stringValue
-            let rating = restaurantDict["rating"].intValue
+            let rating = restaurantDict["rating"].doubleValue
             let yelpURL = restaurantDict["url"].stringValue
             let unparsedCategories = restaurantDict["categories"].arrayValue
             var parsedCategories : [String] = []
@@ -143,13 +143,14 @@ class FindDessertViewController: UIViewController, CLLocationManagerDelegate {
             let phoneNumber = restaurantDict["display_phone"].stringValue
             let distance = restaurantDict["distance"].doubleValue
             let photoURL = restaurantDict["image_url"].stringValue
+            let price = restaurantDict["price"].stringValue
             //print(name,rating,yelpURL,parsedCategories,parsedAddress,phoneNumber,distance)
-            return ["name" : name, "rating" : rating, "yelpURL" : yelpURL, "categories" : parsedCategories, "address" : parsedAddress, "phoneNumber" : phoneNumber, "distance" : distance, "photoURL" : photoURL]
+            return ["name" : name, "rating" : rating, "yelpURL" : yelpURL, "categories" : parsedCategories, "address" : parsedAddress, "phoneNumber" : phoneNumber, "distance" : distance, "photoURL" : photoURL, "price" : price]
         }
         else {
             print("no restaurants found or we messed up :(")
         }
-        return ["name" : "", "rating" : "", "yelpURL" : "", "categories" : "", "address" : "", "phoneNumber" : "", "distance" : ""]
+        return ["name" : "", "rating" : "", "yelpURL" : "", "categories" : "", "address" : "", "phoneNumber" : "", "distance" : "", "photoURL" : "", "price" : ""]
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any!) {
